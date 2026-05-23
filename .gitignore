@@ -1,0 +1,39 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# VS Code
+.vscode/
+
+# Node dependencies (root level)
+node_modules/
+
+# Env files
+.env
+.env.local
+.env*.local
+
+# Expo / React Native
+AnigreApp/.expo/
+AnigreApp/dist/
+AnigreApp/web-build/
+AnigreApp/node_modules/
+AnigreApp/.metro-health-check*
+AnigreApp/npm-debug.*
+AnigreApp/yarn-debug.*
+AnigreApp/yarn-error.*
+AnigreApp/expo-env.d.ts
+AnigreApp/*.tsbuildinfo
+
+# Native build folders
+AnigreApp/ios/
+AnigreApp/android/
+
+# Keys / certs
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anigre – Crop Disease Detection</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Light Theme Variables */
+  --bg-body: #f0fdf4;
+  --bg-phone: #ffffff;
+  --bg-splash: linear-gradient(160deg, #dcfce7, #bbf7d0);
+  --bg-home: #ffffff;
+  --bg-card: #f8fafc;
+  --bg-card-alt: #f1f5f9;
+  --bg-nav: #ffffff;
+  --bg-camera: #e2e8f0;
+  --bg-scan-hero: linear-gradient(135deg, #dcfce7, #86efac);
+  
+  --border-main: #cbd5e1;
+  --border-card: #e2e8f0;
+  --border-nav: #e2e8f0;
+  
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-green-light: #15803d;
+  --text-green-lighter: #166534;
+  
+  --primary-glow: rgba(34, 197, 94, 0.4);
+  --tab-active-bg: #4ade80;
+  --tab-active-text: #000;
+  --tab-text: #15803d;
+  --tab-border: #86efac;
+  
+  --badge-ok-bg: #dcfce7;
+  --badge-ok-text: #166534;
+  --badge-ok-border: #bbf7d0;
+  
+  --badge-warn-bg: #fee2e2;
+  --badge-warn-text: #b91c1c;
+  --badge-warn-border: #fecaca;
+  
+  --icon-bg: #f1f5f9;
+}
+
+[data-theme="dark"] {
+  /* Dark Theme Variables */
+  --bg-body: #0a0f0d;
+  --bg-phone: #0f1a14;
+  --bg-splash: linear-gradient(160deg, #071510, #0f2a1a);
+  --bg-home: #0a0f0d;
+  --bg-card: #111a14;
+  --bg-card-alt: #0f1a14;
+  --bg-nav: #0a0f0d;
+  --bg-camera: #0a120d;
+  --bg-scan-hero: linear-gradient(135deg, #0f2a1a, #1a3a22);
+  
+  --border-main: #1e3a2a;
+  --border-card: #1e3a2a;
+  --border-nav: #1a2e20;
+  
+  --text-main: #fff;
+  --text-muted: #888;
+  --text-green-light: #86efac;
+  --text-green-lighter: #d1fae5;
+  
+  --primary-glow: rgba(74, 222, 128, 0.4);
+  --tab-active-bg: #4ade80;
+  --tab-active-text: #000;
+  --tab-text: #4ade80;
+  --tab-border: #1e3a2a;
+  
+  --badge-ok-bg: rgba(20, 83, 45, 0.27);
+  --badge-ok-text: #4ade80;
+  --badge-ok-border: #14532d;
+  
+  --badge-warn-bg: rgba(127, 29, 29, 0.27);
+  --badge-warn-text: #f87171;
+  --badge-warn-border: #7f1d1d;
+  
+  --icon-bg: #111a14;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
+body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 40px 20px; }
+
+.header-container { text-align: center; position: relative; width: 100%; max-width: 600px; margin-bottom: 24px; }
+h1.site-title { font-size: 14px; color: #4ade80; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; }
+p.site-sub { font-size: 12px; color: var(--text-muted); }
+
+.theme-toggle { position: absolute; right: 0; top: 0; background: var(--bg-card); border: 1px solid var(--border-main); color: var(--text-main); padding: 8px 16px; border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: 600; display: flex; gap: 6px; align-items: center; }
+.theme-toggle:hover { background: var(--bg-card-alt); }
+
+.screens { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+.phone { width: 320px; height: 640px; background: var(--bg-phone); border-radius: 40px; border: 1.5px solid var(--border-main); overflow: hidden; position: relative; box-shadow: 0 0 60px rgba(0,0,0,0.1); }
+[data-theme="dark"] .phone { box-shadow: 0 0 60px #0d2e1a; }
+
+.screen { width: 100%; height: 100%; display: none; flex-direction: column; position: absolute; top: 0; left: 0; }
+.screen.active { display: flex; }
+
+/* NAV TABS */
+.tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+.tab { padding: 8px 18px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1.5px solid var(--tab-border); color: var(--tab-text); background: transparent; transition: .2s; }
+.tab.active, .tab:hover { background: var(--tab-active-bg); color: var(--tab-active-text); border-color: var(--tab-active-bg); }
+
+/* SPLASH */
+#splash { background: var(--bg-splash); justify-content: center; align-items: center; flex-direction: column; gap: 16px; padding: 32px; }
+.logo-ring { width: 110px; height: 110px; border-radius: 50%; background: radial-gradient(circle, #1a4a28, #0a1f12); border: 2px solid #4ade80; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 40px var(--primary-glow), 0 0 80px rgba(74, 222, 128, 0.1); animation: pulse 2s infinite; }
+[data-theme="light"] .logo-ring { background: radial-gradient(circle, #86efac, #dcfce7); }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 40px var(--primary-glow), 0 0 80px rgba(74, 222, 128, 0.1); } 50% { box-shadow: 0 0 60px var(--primary-glow), 0 0 100px rgba(74, 222, 128, 0.2); } }
+.logo-ring svg { width: 52px; height: 52px; }
+[data-theme="light"] .logo-ring svg path { fill: #166534; }
+#splash h2 { font-size: 36px; font-weight: 800; letter-spacing: -1px; color: var(--text-main); }
+#splash p { font-size: 13px; color: var(--text-green-light); letter-spacing: 1px; }
+.dots { display: flex; gap: 6px; margin-top: 8px; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-main); }
+.dot.active { background: #4ade80; width: 18px; }
+.btn { width: 100%; padding: 14px; border-radius: 16px; font-size: 15px; font-weight: 700; cursor: pointer; border: none; margin-top: 8px; }
+.btn-primary { background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3); }
+.btn-outline { background: transparent; border: 1.5px solid var(--border-main); color: var(--text-main); }
+
+/* HOME */
+#home { background: var(--bg-home); padding: 24px 20px; flex-direction: column; gap: 14px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; }
+.topbar h3 { font-size: 20px; font-weight: 700; }
+.topbar h3 span { color: #22c55e; }
+.notif { width: 38px; height: 38px; border-radius: 12px; background: var(--bg-card); border: 1px solid var(--border-main); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.scan-hero { background: var(--bg-scan-hero); border-radius: 24px; padding: 28px; display: flex; flex-direction: column; align-items: center; gap: 12px; border: 1px solid var(--border-main); }
+.scan-btn { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #22c55e, #16a34a); display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 0 30px rgba(34, 197, 94, 0.4); cursor: pointer; border: none; animation: pulse 2s infinite; transition: .15s; }
+.scan-btn:hover { transform: scale(1.07); }
+.scan-label { font-size: 13px; color: var(--text-green-light); font-weight: 600; }
+.stats { display: flex; gap: 10px; }
+.stat-card { flex: 1; background: var(--bg-card); border-radius: 16px; padding: 14px; border: 1px solid var(--border-card); }
+.stat-card .num { font-size: 26px; font-weight: 800; color: #22c55e; }
+.stat-card .lbl { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+.stat-card .lbl.warn { color: #ef4444; }
+.section-head { display: flex; justify-content: space-between; align-items: center; }
+.section-head h4 { font-size: 14px; font-weight: 600; }
+.section-head a { font-size: 11px; color: #22c55e; text-decoration: none; font-weight: 600; }
+.history-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-nav); cursor: pointer; }
+.hi-icon { width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.hi-info { flex: 1; }
+.hi-info .name { font-size: 13px; font-weight: 600; color: var(--text-main); }
+.hi-info .date { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+.hi-badge { font-size: 10px; padding: 3px 8px; border-radius: 20px; font-weight: 600; }
+.badge-warn { background: var(--badge-warn-bg); color: var(--badge-warn-text); border: 1px solid var(--badge-warn-border); }
+.badge-ok { background: var(--badge-ok-bg); color: var(--badge-ok-text); border: 1px solid var(--badge-ok-border); }
+
+/* BOTTOM NAV */
+.bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; background: var(--bg-nav); border-top: 1px solid var(--border-nav); display: flex; padding: 10px 0 18px; }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; font-size: 9px; color: var(--text-muted); transition: .15s; font-weight: 500; }
+.nav-item.active { color: #22c55e; }
+.nav-item svg { width: 20px; height: 20px; }
+
+/* SCAN */
+#scan { background: #000; flex-direction: column; }
+.camera-view { flex: 1; background: var(--bg-camera); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.camera-view img { width: 100%; height: 100%; object-fit: cover; opacity: .7; }
+.scan-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.scan-frame { width: 200px; height: 200px; border: 2px solid #4ade80; border-radius: 20px; box-shadow: 0 0 0 4000px rgba(0,0,0,0.5); animation: scan-anim 2s infinite; }
+@keyframes scan-anim { 0%, 100% { border-color: #4ade80; } 50% { border-color: #86efac; box-shadow: 0 0 20px rgba(74, 222, 128, 0.4), 0 0 0 4000px rgba(0,0,0,0.5); } }
+.scan-line { position: absolute; width: 180px; height: 2px; background: linear-gradient(90deg, transparent, #4ade80, transparent); animation: scanline 2s infinite; }
+@keyframes scanline { 0% { top: calc(50% - 95px); } 100% { top: calc(50% + 95px); } }
+.cam-tip { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 11px; color: #fff; background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 12px; text-align: center; white-space: nowrap; }
+.scan-controls { background: var(--bg-nav); padding: 20px; display: flex; align-items: center; gap: 16px; border-top: 1px solid var(--border-nav); }
+.ctrl-btn { width: 42px; height: 42px; border-radius: 12px; background: var(--bg-card); border: 1px solid var(--border-card); display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; }
+.capture-btn { flex: 1; padding: 14px; border-radius: 16px; background: linear-gradient(135deg, #22c55e, #16a34a); font-size: 14px; font-weight: 700; color: #fff; border: none; cursor: pointer; box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3); }
+
+/* RESULTS */
+#results { background: var(--bg-home); flex-direction: column; padding: 20px; gap: 14px; overflow-y: auto; }
+.back-row { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.back-row span { font-size: 14px; color: #22c55e; }
+.back-row span.title { color: var(--text-main); }
+.result-img { border-radius: 20px; overflow: hidden; position: relative; height: 180px; background: var(--bg-card-alt); }
+.result-img img { width: 100%; height: 100%; object-fit: cover; opacity: .8; }
+.ai-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); border: 1px solid #4ade80; border-radius: 20px; padding: 4px 10px; font-size: 10px; color: #4ade80; backdrop-filter: blur(4px); }
+.disease-name { font-size: 22px; font-weight: 800; color: #ef4444; }
+.conf-row { display: flex; align-items: center; gap: 10px; }
+.conf-label { font-size: 12px; color: var(--text-muted); }
+.conf-bar { flex: 1; height: 6px; background: var(--border-card); border-radius: 3px; overflow: hidden; }
+.conf-fill { height: 100%; background: linear-gradient(90deg, #22c55e, #4ade80); border-radius: 3px; width: 94%; }
+.conf-val { font-size: 12px; color: #22c55e; font-weight: 700; }
+.info-card { background: var(--bg-card-alt); border-radius: 16px; padding: 16px; border: 1px solid var(--border-card); }
+.info-card h5 { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+.treat-item { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; font-size: 12px; line-height: 1.5; color: var(--text-main); }
+.treat-item::before { content: "✓"; color: #22c55e; font-weight: 700; flex-shrink: 0; }
+.severity { display: flex; align-items: center; gap: 8px; }
+.sev-dot { width: 10px; height: 10px; border-radius: 50%; background: #ef4444; }
+.sev-text { font-size: 13px; font-weight: 600; color: #ef4444; }
+.action-row { display: flex; gap: 10px; }
+.act-btn { flex: 1; padding: 13px; border-radius: 14px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; }
+.act-primary { background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; }
+.act-secondary { background: var(--bg-card); border: 1px solid var(--border-main); color: var(--text-main); }
+
+/* PROFILE */
+#profile { background: var(--bg-home); flex-direction: column; padding: 24px 20px; gap: 16px; }
+.avatar-section { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px 0; }
+.avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #22c55e, #16a34a); display: flex; align-items: center; justify-content: center; font-size: 32px; border: 3px solid rgba(74, 222, 128, 0.3); }
+.avatar-name { font-size: 18px; font-weight: 700; color: var(--text-main); }
+.avatar-sub { font-size: 12px; color: var(--text-muted); }
+.profile-stats { display: flex; gap: 10px; }
+.ps-card { flex: 1; background: var(--bg-card-alt); border-radius: 14px; padding: 14px; border: 1px solid var(--border-card); text-align: center; }
+.ps-card .num { font-size: 22px; font-weight: 800; color: #22c55e; }
+.ps-card .lbl { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+.menu-item { display: flex; align-items: center; gap: 12px; padding: 14px; background: var(--bg-card-alt); border-radius: 14px; border: 1px solid var(--border-card); cursor: pointer; }
+.menu-item .mi-icon { width: 38px; height: 38px; border-radius: 10px; background: var(--icon-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.menu-item .mi-text { font-size: 13px; font-weight: 500; color: var(--text-main); }
+.menu-item .mi-arr { margin-left: auto; color: var(--text-muted); font-size: 16px; }
+</style>
+</head>
+<body>
+
+<div class="header-container">
+  <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+    ☀️ Light Mode
+  </button>
+  <h1 class="site-title">🌿 Anigre UI / UX Prototype</h1>
+  <p class="site-sub">Crop Disease Detection System — Interactive Preview</p>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showScreen('splash',this)">Splash</div>
+  <div class="tab" onclick="showScreen('home',this)">Home</div>
+  <div class="tab" onclick="showScreen('scan',this)">Scan</div>
+  <div class="tab" onclick="showScreen('results',this)">Results</div>
+  <div class="tab" onclick="showScreen('profile',this)">Profile</div>
+</div>
+
+<div class="screens">
+<div class="phone">
+
+  <!-- SPLASH -->
+  <div class="screen active" id="splash">
+    <div class="logo-ring">
+      <svg viewBox="0 0 52 52" fill="none"><path d="M26 4C14 4 6 14 6 26c0 8 4 15 10 19 1-6 4-11 10-14-4 4-6 9-6 15h12c0-6-2-11-6-15 6 3 9 8 10 14 6-4 10-11 10-19C46 14 38 4 26 4z" fill="#4ade80"/></svg>
+    </div>
+    <h2>Anigre</h2>
+    <p>AI-Powered Crop Health</p>
+    <div class="dots">
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+    <div style="width:100%;margin-top:auto;display:flex;flex-direction:column;gap:10px;padding:0 8px">
+      <button class="btn btn-primary" onclick="showScreen('home',document.querySelectorAll('.tab')[1])">Get Started</button>
+      <button class="btn btn-outline">Sign In</button>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div class="screen" id="home" style="padding-bottom:70px">
+    <div style="flex:1;overflow-y:auto;padding:24px 20px;display:flex;flex-direction:column;gap:14px">
+      <div class="topbar">
+        <div><div style="font-size:12px;color:var(--text-muted)">Good Morning 🌤️</div><h3>Hello, <span>Farmer!</span></h3></div>
+        <div class="notif">🔔</div>
+      </div>
+      <div class="scan-hero">
+        <button class="scan-btn" onclick="showScreen('scan',document.querySelectorAll('.tab')[2])">📷</button>
+        <div class="scan-label">Tap to Scan Your Crop</div>
+        <div style="font-size:11px;color:var(--text-muted)">Point camera at affected leaves</div>
+      </div>
+      <div class="stats">
+        <div class="stat-card"><div class="num">12</div><div class="lbl">Scans Today</div></div>
+        <div class="stat-card"><div class="num" style="color:#ef4444">3</div><div class="lbl warn">⚠ Diseases Found</div></div>
+        <div class="stat-card"><div class="num">94%</div><div class="lbl">Accuracy</div></div>
+      </div>
+      <div class="section-head"><h4>Recent Scans</h4><a href="#">See All</a></div>
+      <div class="history-item" onclick="showScreen('results',document.querySelectorAll('.tab')[3])">
+        <div class="hi-icon" style="background:var(--badge-warn-bg)">🍅</div>
+        <div class="hi-info"><div class="name">Tomato Leaf</div><div class="date">Today · 09:14 AM</div></div>
+        <div class="hi-badge badge-warn">Late Blight</div>
+      </div>
+      <div class="history-item">
+        <div class="hi-icon" style="background:var(--badge-ok-bg)">🌽</div>
+        <div class="hi-info"><div class="name">Corn Leaf</div><div class="date">Today · 08:02 AM</div></div>
+        <div class="hi-badge badge-ok">Healthy</div>
+      </div>
+      <div class="history-item">
+        <div class="hi-icon" style="background:var(--badge-warn-bg)">🌾</div>
+        <div class="hi-info"><div class="name">Wheat Stalk</div><div class="date">Yesterday</div></div>
+        <div class="hi-badge badge-warn">Rust</div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home
+      </div>
+      <div class="nav-item" onclick="showScreen('scan',document.querySelectorAll('.tab')[2])">
+        <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3"/><path d="M20 4h-3.2L15 2H9L7.2 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm-8 13a5 5 0 110-10 5 5 0 010 10z"/></svg>Scan
+      </div>
+      <div class="nav-item" onclick="showScreen('results',document.querySelectorAll('.tab')[3])">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9l-7-7zm-1 2l6 6h-6V4zM8 13h8v1H8zm0 3h8v1H8zm0-6h3v1H8z"/></svg>History
+      </div>
+      <div class="nav-item" onclick="showScreen('profile',document.querySelectorAll('.tab')[4])">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z"/></svg>Profile
+      </div>
+    </div>
+  </div>
+
+  <!-- SCAN -->
+  <div class="screen" id="scan" style="flex-direction:column">
+    <div style="padding:16px 20px;display:flex;align-items:center;gap:8px;background:var(--bg-nav)">
+      <span style="cursor:pointer;color:#22c55e;font-size:20px" onclick="showScreen('home',document.querySelectorAll('.tab')[1])">←</span>
+      <span style="font-size:15px;font-weight:600;color:var(--text-main)">Scan Crop</span>
+      <span style="margin-left:auto;font-size:11px;color:#22c55e;background:var(--badge-ok-bg);padding:4px 10px;border-radius:20px;border:1px solid var(--badge-ok-border)">AI Ready</span>
+    </div>
+    <div class="camera-view">
+      <div style="width:100%;height:100%;background:linear-gradient(180deg,#0f1a14,#1a3a22);display:flex;align-items:center;justify-content:center">
+        <div style="text-align:center;color:#1a3a22;font-size:48px;filter:drop-shadow(0 0 10px rgba(0,0,0,0.5))">🌿</div>
+      </div>
+      <div class="scan-overlay">
+        <div style="position:relative">
+          <div class="scan-frame"></div>
+          <div class="scan-line"></div>
+        </div>
+      </div>
+      <div class="cam-tip">Align crop leaf within the frame</div>
+    </div>
+    <div class="scan-controls">
+      <div class="ctrl-btn">⚡</div>
+      <button class="capture-btn" onclick="showScreen('results',document.querySelectorAll('.tab')[3])">📷 Capture & Analyze</button>
+      <div class="ctrl-btn">🖼️</div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="screen" id="results">
+    <div class="back-row" onclick="showScreen('scan',document.querySelectorAll('.tab')[2])">
+      <span style="font-size:20px">←</span>
+      <span class="title" style="font-size:15px;font-weight:600">Scan Results</span>
+      <span style="margin-left:auto;font-size:11px;color:var(--text-muted)">94% Confidence</span>
+    </div>
+    <div class="result-img">
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a2e14,#0f1a0a);display:flex;align-items:center;justify-content:center;font-size:60px">🍅</div>
+      <div class="ai-badge">🤖 AI Analyzed</div>
+    </div>
+    <div class="disease-name">Tomato Late Blight</div>
+    <div class="conf-row">
+      <div class="conf-label">Confidence</div>
+      <div class="conf-bar"><div class="conf-fill"></div></div>
+      <div class="conf-val">94%</div>
+    </div>
+    <div class="info-card">
+      <h5>Severity</h5>
+      <div class="severity"><div class="sev-dot"></div><div class="sev-text">High — Immediate Action Required</div></div>
+    </div>
+    <div class="info-card">
+      <h5>Treatment Recommendations</h5>
+      <div class="treat-item">Apply copper-based fungicide immediately</div>
+      <div class="treat-item">Remove and destroy all infected leaves</div>
+      <div class="treat-item">Improve air circulation between plants</div>
+      <div class="treat-item">Avoid overhead irrigation</div>
+    </div>
+    <div class="action-row">
+      <button class="act-btn act-primary">📋 Full Report</button>
+      <button class="act-btn act-secondary">📤 Share</button>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="screen" id="profile" style="padding-bottom:70px">
+    <div style="flex:1;overflow-y:auto;padding:24px 20px;display:flex;flex-direction:column;gap:12px">
+      <div style="font-size:16px;font-weight:700">My Profile</div>
+      <div class="avatar-section">
+        <div class="avatar">👨‍🌾</div>
+        <div class="avatar-name">Sameer K.</div>
+        <div class="avatar-sub">Farmer · Joined Jan 2025</div>
+      </div>
+      <div class="profile-stats">
+        <div class="ps-card"><div class="num">47</div><div class="lbl">Total Scans</div></div>
+        <div class="ps-card"><div class="num">8</div><div class="lbl">Diseases</div></div>
+        <div class="ps-card"><div class="num">92%</div><div class="lbl">Accuracy</div></div>
+      </div>
+      <div class="menu-item"><div class="mi-icon">🌿</div><div class="mi-text">My Crops</div><div class="mi-arr">›</div></div>
+      <div class="menu-item"><div class="mi-icon">📊</div><div class="mi-text">Analytics & Reports</div><div class="mi-arr">›</div></div>
+      <div class="menu-item"><div class="mi-icon">🔔</div><div class="mi-text">Notifications</div><div class="mi-arr">›</div></div>
+      <div class="menu-item"><div class="mi-icon">🌐</div><div class="mi-text">Language</div><div class="mi-arr">›</div></div>
+      <div class="menu-item"><div class="mi-icon">⚙️</div><div class="mi-text">Settings</div><div class="mi-arr">›</div></div>
+      <div class="menu-item" style="border-color:var(--badge-warn-border)"><div class="mi-icon" style="background:var(--badge-warn-bg)">🚪</div><div class="mi-text" style="color:#ef4444">Sign Out</div></div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="showScreen('home',document.querySelectorAll('.tab')[1])">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home
+      </div>
+      <div class="nav-item" onclick="showScreen('scan',document.querySelectorAll('.tab')[2])">
+        <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3"/><path d="M20 4h-3.2L15 2H9L7.2 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm-8 13a5 5 0 110-10 5 5 0 010 10z"/></svg>Scan
+      </div>
+      <div class="nav-item" onclick="showScreen('results',document.querySelectorAll('.tab')[3])">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9l-7-7zm-1 2l6 6h-6V4zM8 13h8v1H8zm0 3h8v1H8zm0-6h3v1H8z"/></svg>History
+      </div>
+      <div class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z"/></svg>Profile
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+function showScreen(id, tabEl) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(tabEl) tabEl.classList.add('active');
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn = document.getElementById('themeBtn');
+  if (html.getAttribute('data-theme') === 'dark') {
+    html.setAttribute('data-theme', 'light');
+    btn.innerHTML = '🌙 Dark Mode';
+  } else {
+    html.setAttribute('data-theme', 'dark');
+    btn.innerHTML = '☀️ Light Mode';
+  }
+}
+</script>
+</body>
+</html>

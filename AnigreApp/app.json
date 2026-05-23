@@ -1,0 +1,47 @@
+{
+  "expo": {
+    "name": "AnigreApp",
+    "slug": "AnigreApp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#001a14"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sameer8822.AnigreApp"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0b1016"
+      },
+      "largeHeap": true,
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "package": "com.sameer8822.AnigreApp",
+      "permissions": [
+        "android.permission.CAMERA"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "react-native-fast-tflite",
+      "expo-sqlite",
+      "expo-video",
+      "expo-asset"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "0ffbfdde-dadd-4e83-80c9-3637982dc8e7"
+      }
+    }
+  }
+}

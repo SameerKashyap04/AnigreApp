@@ -1,0 +1,42 @@
+graph TD
+    classDef primary fill:#4CAF50,stroke:#388E3C,stroke-width:2px,color:white;
+    classDef secondary fill:#2196F3,stroke:#1976D2,stroke-width:2px,color:white;
+    classDef warning fill:#FF9800,stroke:#F57C00,stroke-width:2px,color:white;
+    classDef process fill:#9E9E9E,stroke:#616161,stroke-width:2px,color:white;
+    classDef database fill:#673AB7,stroke:#512DA8,stroke-width:2px,color:white;
+
+    Start((App Launch)) --> Home[Home Screen]
+    Home -->|Tap Scan Button| Cam[Camera / Image Gallery]
+    
+    Cam -->|Image Acquired| Crop[Crop to Center Square & Resize]
+    Crop --> Pixels[Extract Raw RGB Pixels]
+    
+    subgraph Stage 1: Plant Verification
+    Pixels --> Model1[Plant Detector AI Model]
+    Model1 --> P1{AI Output > 50%?}
+    P1 -->|Yes| Heur[RGB Color Heuristic Check]
+    P1 -->|No| Reject[Status: No Plant Detected]
+    Heur -->|Valid Colors| Proceed[Proceed to Stage 2]
+    Heur -->|Invalid Colors| Reject
+    end
+    
+    subgraph Stage 2: Disease Diagnosis
+    Proceed --> Model2[Disease Detection AI Model]
+    Model2 --> P2{Confidence > 85%?}
+    P2 -->|No| Unknown[Status: Unknown/Uncertain]
+    P2 -->|Yes| Identify[Map Disease & Match Treatments]
+    end
+    
+    Identify --> DB[(SQLite Database)]
+    Reject --> DB
+    Unknown --> DB
+    
+    DB --> Results[Results Screen]
+    Results --> End((End))
+
+    class Start,End primary;
+    class Home,Cam,Results secondary;
+    class Reject,Unknown warning;
+    class Identify primary;
+    class Crop,Pixels,Proceed process;
+    class DB database;
